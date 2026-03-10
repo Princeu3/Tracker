@@ -1,5 +1,7 @@
 "use client";
 
+import { memo } from "react";
+import Markdown from "react-markdown";
 import { cn } from "@/lib/utils";
 import { Bot, User, Loader2 } from "lucide-react";
 
@@ -55,13 +57,17 @@ export function ChatMessages({ messages, isLoading }: Props) {
             )}>
               <div
                 className={cn(
-                  "px-4 py-2.5 text-sm whitespace-pre-wrap",
+                  "px-4 py-2.5 text-sm",
                   message.role === "user"
                     ? "bg-primary text-primary-foreground rounded-2xl rounded-br-md"
                     : "bg-muted rounded-2xl rounded-bl-md"
                 )}
               >
-                {displayContent}
+                {message.role === "assistant" ? (
+                  <MarkdownContent content={displayContent} />
+                ) : (
+                  <span className="whitespace-pre-wrap">{displayContent}</span>
+                )}
                 {isStreamingSchema && (
                   <span className="flex items-center gap-1.5 mt-2 text-xs text-muted-foreground">
                     <Loader2 className="h-3 w-3 animate-spin" />
@@ -116,6 +122,23 @@ export function ChatMessages({ messages, isLoading }: Props) {
     </div>
   );
 }
+
+const MarkdownContent = memo(function MarkdownContent({ content }: { content: string }) {
+  return (
+    <div className="prose prose-sm prose-neutral dark:prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&_ul]:my-1 [&_ol]:my-1 [&_li]:my-0 [&_p]:my-1.5">
+      <Markdown
+        components={{
+          a(props) {
+            const { node, ...rest } = props;
+            return <a target="_blank" rel="noopener noreferrer" {...rest} />;
+          },
+        }}
+      >
+        {content}
+      </Markdown>
+    </div>
+  );
+});
 
 function formatContent(content: string): string {
   // Strip completed schema blocks (and surrounding whitespace)
