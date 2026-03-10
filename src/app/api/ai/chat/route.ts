@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { openai } from "@/lib/ai/client";
+import { getOpenAI } from "@/lib/ai/client";
 import { SCHEMA_GENERATION_SYSTEM_PROMPT } from "@/lib/ai/prompts";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
 
   const { messages } = await req.json();
 
-  const stream = await openai.chat.completions.create({
+  const stream = await getOpenAI().chat.completions.create({
     model: "gpt-4o",
     stream: true,
     messages: [
