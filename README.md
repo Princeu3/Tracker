@@ -1,6 +1,11 @@
 # Tracker
 
-An AI-powered data tracker application. Describe what you want to track and the AI generates a structured schema — then manage your data in a spreadsheet-like interface.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4)](https://tailwindcss.com)
+
+An AI-powered data tracker. Describe what you want to track and the AI generates a structured schema — then manage your data in a spreadsheet-like interface.
 
 ## Features
 
@@ -14,38 +19,35 @@ An AI-powered data tracker application. Describe what you want to track and the 
 
 ## Tech Stack
 
-- **Framework**: Next.js 16 (App Router)
-- **Database**: PostgreSQL with Drizzle ORM
-- **Auth**: NextAuth v5 (Google OAuth + credentials)
-- **AI**: OpenAI GPT-4o with streaming responses
-- **UI**: Tailwind CSS v4, Radix UI, shadcn/ui
-- **Drag & Drop**: dnd-kit
-- **Deployment**: Docker / Railway
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js 16 (App Router) |
+| Database | PostgreSQL + Drizzle ORM |
+| Auth | NextAuth v5 (Google OAuth + credentials) |
+| AI | OpenAI GPT-4o (streaming) |
+| UI | Tailwind CSS v4, Radix UI, shadcn/ui |
+| Drag & Drop | dnd-kit |
+| Deployment | Docker / Railway |
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ or Bun
+- Node.js 18+ or [Bun](https://bun.sh)
 - PostgreSQL database
-
-### Environment Variables
-
-Create a `.env.local` file:
-
-```env
-DATABASE_URL=postgresql://...
-AUTH_SECRET=your-auth-secret
-AUTH_GOOGLE_ID=your-google-client-id
-AUTH_GOOGLE_SECRET=your-google-client-secret
-OPENAI_API_KEY=your-openai-api-key
-```
 
 ### Setup
 
 ```bash
+# Clone the repo
+git clone https://github.com/Princeu3/Tracker.git
+cd Tracker
+
 # Install dependencies
 bun install
+
+# Copy env template and fill in your values
+cp .env.example .env.local
 
 # Push database schema
 bun run db:push
@@ -55,6 +57,19 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to get started.
+
+### Environment Variables
+
+See [`.env.example`](.env.example) for all required variables:
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `DATABASE_URL` | Yes | PostgreSQL connection string |
+| `AUTH_SECRET` | Yes | Random secret for NextAuth (`openssl rand -base64 32`) |
+| `AUTH_URL` | Yes | App URL (e.g. `http://localhost:3000`) |
+| `OPENAI_API_KEY` | Yes | OpenAI API key for schema generation |
+| `AUTH_GOOGLE_ID` | No | Google OAuth client ID |
+| `AUTH_GOOGLE_SECRET` | No | Google OAuth client secret |
 
 ## Project Structure
 
@@ -73,3 +88,19 @@ src/
 ├── lib/              # AI client/prompts, constants, utilities
 └── types/            # TypeScript type definitions
 ```
+
+## Contributing
+
+Contributions are welcome! Here's how:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feat/your-feature`)
+3. Commit your changes (`git commit -m 'Add your feature'`)
+4. Push to the branch (`git push origin feat/your-feature`)
+5. Open a Pull Request
+
+Please keep PRs focused on a single change and include a clear description of what and why.
+
+## License
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
