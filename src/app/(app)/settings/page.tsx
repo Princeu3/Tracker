@@ -7,7 +7,7 @@ export default async function SettingsPage() {
   const user = session?.user;
 
   return (
-    <div className="p-6">
+    <div className="h-full overflow-auto p-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Settings</h1>
         <p className="text-muted-foreground">Manage your account</p>

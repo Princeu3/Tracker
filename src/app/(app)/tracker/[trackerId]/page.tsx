@@ -13,7 +13,7 @@ export default async function TrackerPage({
   if (!tracker) notFound();
 
   return (
-    <div className="p-6 animate-fade-in">
+    <div className="h-full overflow-auto p-6 animate-fade-in">
       <div className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">{tracker.name}</h1>
         {tracker.description && (
