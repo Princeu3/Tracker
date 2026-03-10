@@ -15,13 +15,25 @@ type Props = {
 };
 
 export function ChatMessages({ messages, isLoading }: Props) {
+  // Only show typing dots when loading AND no assistant message is streaming yet
+  const lastMsg = messages[messages.length - 1];
+  const isStreaming = isLoading && lastMsg?.role === "assistant" && lastMsg.content.length > 0;
+  const showTypingDots = isLoading && !isStreaming;
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {messages.map((message, index) => {
         const isStreamingSchema =
           message.role === "assistant" &&
           message.content.includes("|||SCHEMA_START|||") &&
           !message.content.includes("|||SCHEMA_END|||");
+
+        const displayContent = formatContent(message.content);
+
+        // Don't render empty assistant bubbles
+        if (message.role === "assistant" && !displayContent && !isStreamingSchema) {
+          return null;
+        }
 
         return (
           <div
@@ -46,7 +58,7 @@ export function ChatMessages({ messages, isLoading }: Props) {
                     : "bg-muted rounded-2xl rounded-bl-md"
                 )}
               >
-                {formatContent(message.content)}
+                {displayContent}
                 {isStreamingSchema && (
                   <span className="flex items-center gap-1.5 mt-2 text-xs text-muted-foreground">
                     <Loader2 className="h-3 w-3 animate-spin" />
@@ -77,7 +89,7 @@ export function ChatMessages({ messages, isLoading }: Props) {
         );
       })}
 
-      {isLoading && (
+      {showTypingDots && (
         <div className="flex gap-3 animate-fade-in">
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
             <Bot className="h-4 w-4" />
