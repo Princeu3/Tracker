@@ -103,17 +103,17 @@ export function ChatMessages({ messages, isLoading }: Props) {
 }
 
 function formatContent(content: string): string {
-  // Strip completed schema blocks
+  // Strip completed schema blocks (and surrounding whitespace)
   let cleaned = content.replace(
-    /\|\|\|SCHEMA_START\|\|\|[\s\S]*?\|\|\|SCHEMA_END\|\|\|/g,
-    ""
+    /\s*\|\|\|SCHEMA_START\|\|\|[\s\S]*?\|\|\|SCHEMA_END\|\|\|\s*/g,
+    "\n\n"
   );
   // While streaming, the end marker may not have arrived yet —
-  // truncate everything from the start marker onward so users
-  // never see raw JSON being built up
+  // truncate everything from the start marker onward
   const startIdx = cleaned.indexOf("|||SCHEMA_START|||");
   if (startIdx !== -1) {
     cleaned = cleaned.slice(0, startIdx);
   }
-  return cleaned.trim();
+  // Collapse 3+ newlines into 2
+  return cleaned.replace(/\n{3,}/g, "\n\n").trim();
 }
