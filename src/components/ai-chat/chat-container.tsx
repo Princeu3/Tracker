@@ -53,6 +53,7 @@ export function ChatContainer() {
             role: m.role,
             content: m.content,
           })),
+          currentSchema: schema,
         }),
       });
 

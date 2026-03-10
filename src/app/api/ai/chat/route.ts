@@ -9,13 +9,24 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { messages } = await req.json();
+  const { messages, currentSchema } = await req.json();
+
+  const systemMessages: { role: "system"; content: string }[] = [
+    { role: "system", content: SCHEMA_GENERATION_SYSTEM_PROMPT },
+  ];
+
+  if (currentSchema) {
+    systemMessages.push({
+      role: "system",
+      content: `The user's current schema (including any manual edits they made in the preview panel) is:\n\n${JSON.stringify(currentSchema, null, 2)}\n\nWhen the user asks for changes, modify THIS schema incrementally — do not regenerate from scratch. Keep all existing columns, names, and options unless the user specifically asks to change them.`,
+    });
+  }
 
   const stream = await getOpenAI().chat.completions.create({
     model: "gpt-4o",
     stream: true,
     messages: [
-      { role: "system", content: SCHEMA_GENERATION_SYSTEM_PROMPT },
+      ...systemMessages,
       ...messages,
     ],
   });
