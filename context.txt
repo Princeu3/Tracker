@@ -1,0 +1,31 @@
+I want to make a AI powered application that helps with creating a tracker
+application. 
+
+Problem: I dont like excel, I dont know what fields to pick and it is weird to 
+start with ready templates with the right dropdowns. 
+
+What do I mean by Tracker?
+
+Example. I am in apartment hunting and I opened excel but got stuck with what fields to pick
+also i didnt know how to create drop downs etc. 
+
+Same goes to job application tracking, Talent hiring tracker,
+It can be any tracker- Readlists, etc. 
+
+Flow-
+I come to the platform I see various of my prebuild trackers
+ (reciprocate excel but very human friendly ui/ux) and if none available 
+ option to create a new one - 
+ AI Chat opens up where asks what tracking do you want to do ?
+ In Natual langauge we write what we need. then the AI build the fields,
+ columns, etc (Human verifying should be there) before finalized for use. 
+ Should be still configurable manually like excel at any time. 
+
+ Also I should be able to upload pdf, images, docx that are viewable there on the platform.
+
+ Frontend - Should be the lightest to handle all data and seamless edits. 
+ No multi tenant, just one person signing in using NextAuth Google Auth/email,pasword
+
+ I dont what type of backend we need - something fast!
+
+ Also lets figure out rest of the stack we need.
