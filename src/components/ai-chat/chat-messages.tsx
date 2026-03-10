@@ -49,10 +49,13 @@ export function ChatMessages({ messages, isLoading }: Props) {
                 <Bot className="h-4 w-4" />
               </div>
             )}
-            <div className="flex flex-col gap-1">
+            <div className={cn(
+              "flex flex-col gap-1 max-w-[75%]",
+              message.role === "user" && "items-end"
+            )}>
               <div
                 className={cn(
-                  "max-w-[80%] px-4 py-2.5 text-sm whitespace-pre-wrap",
+                  "px-4 py-2.5 text-sm whitespace-pre-wrap",
                   message.role === "user"
                     ? "bg-primary text-primary-foreground rounded-2xl rounded-br-md"
                     : "bg-muted rounded-2xl rounded-bl-md"

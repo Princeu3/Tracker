@@ -1,5 +1,6 @@
 import { getTracker } from "@/actions/tracker";
 import { DataTable } from "@/components/tracker/data-table";
+import { EditableTitle } from "@/components/tracker/editable-title";
 import { notFound } from "next/navigation";
 
 export default async function TrackerPage({
@@ -14,12 +15,11 @@ export default async function TrackerPage({
 
   return (
     <div className="h-full overflow-auto p-6 animate-fade-in">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight">{tracker.name}</h1>
-        {tracker.description && (
-          <p className="text-muted-foreground">{tracker.description}</p>
-        )}
-      </div>
+      <EditableTitle
+        trackerId={tracker.id}
+        initialName={tracker.name}
+        initialDescription={tracker.description}
+      />
       <DataTable
         trackerId={tracker.id}
         columns={tracker.columns}

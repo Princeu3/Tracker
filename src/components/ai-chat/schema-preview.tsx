@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,11 +11,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trash2, Plus, Sparkles, Loader2 } from "lucide-react";
-import { COLUMN_TYPES } from "@/lib/constants";
-import type { GeneratedSchema, SchemaColumn, ColumnType } from "@/types";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Card } from "@/components/ui/card";
+import { Trash2, Plus, X, Sparkles, Loader2 } from "lucide-react";
+import { COLUMN_TYPES, SELECT_COLORS } from "@/lib/constants";
+import { dotColorMap } from "@/lib/color-map";
+import { cn } from "@/lib/utils";
+import type { GeneratedSchema, SchemaColumn, ColumnType, SelectOption } from "@/types";
 
 type Props = {
   schema: GeneratedSchema;
@@ -115,18 +122,15 @@ export function SchemaPreview({
                       ))}
                     </SelectContent>
                   </Select>
-                  {col.config?.options && col.config.options.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                      {col.config.options.map((opt) => (
-                        <Badge
-                          key={opt.value}
-                          variant="secondary"
-                          className="text-xs"
-                        >
-                          {opt.label}
-                        </Badge>
-                      ))}
-                    </div>
+                  {(col.type === "select" || col.type === "multi_select") && (
+                    <OptionEditor
+                      options={col.config?.options || []}
+                      onChange={(options) =>
+                        updateColumn(idx, {
+                          config: { ...col.config, options },
+                        })
+                      }
+                    />
                   )}
                 </div>
                 <Button
@@ -161,5 +165,129 @@ export function SchemaPreview({
         )}
       </Button>
     </div>
+  );
+}
+
+function OptionEditor({
+  options,
+  onChange,
+}: {
+  options: SelectOption[];
+  onChange: (options: SelectOption[]) => void;
+}) {
+  const [newLabel, setNewLabel] = useState("");
+
+  function addOption() {
+    const label = newLabel.trim();
+    if (!label) return;
+    const value = label.toLowerCase().replace(/\s+/g, "_");
+    onChange([...options, { label, value, color: "gray" }]);
+    setNewLabel("");
+  }
+
+  function removeOption(index: number) {
+    onChange(options.filter((_, i) => i !== index));
+  }
+
+  function updateLabel(index: number, label: string) {
+    const updated = [...options];
+    updated[index] = { ...updated[index], label };
+    onChange(updated);
+  }
+
+  function updateColor(index: number, color: string) {
+    const updated = [...options];
+    updated[index] = { ...updated[index], color };
+    onChange(updated);
+  }
+
+  return (
+    <div className="space-y-1">
+      <div className="max-h-36 space-y-1 overflow-y-auto">
+        {options.map((opt, idx) => (
+          <div key={idx} className="flex items-center gap-1">
+            <ColorDot
+              color={opt.color || "gray"}
+              onChange={(c) => updateColor(idx, c)}
+            />
+            <Input
+              value={opt.label}
+              onChange={(e) => updateLabel(idx, e.target.value)}
+              onBlur={() => {
+                if (!opt.label.trim()) removeOption(idx);
+              }}
+              className="h-6 flex-1 text-xs"
+            />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-5 w-5 shrink-0"
+              onClick={() => removeOption(idx)}
+            >
+              <X className="h-3 w-3" />
+            </Button>
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center gap-1">
+        <Input
+          value={newLabel}
+          onChange={(e) => setNewLabel(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && addOption()}
+          placeholder="New option..."
+          className="h-6 flex-1 text-xs"
+        />
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-5 w-5 shrink-0"
+          onClick={addOption}
+          disabled={!newLabel.trim()}
+        >
+          <Plus className="h-3 w-3" />
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function ColorDot({
+  color,
+  onChange,
+}: {
+  color: string;
+  onChange: (color: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          className={cn(
+            "h-4 w-4 shrink-0 rounded-full border border-border/50",
+            dotColorMap[color] || dotColorMap.gray
+          )}
+        />
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-2" align="start">
+        <div className="grid grid-cols-6 gap-1">
+          {SELECT_COLORS.map((c) => (
+            <button
+              key={c}
+              onClick={() => {
+                onChange(c);
+                setOpen(false);
+              }}
+              className={cn(
+                "h-5 w-5 rounded-full border-2 transition-transform hover:scale-110",
+                dotColorMap[c] || dotColorMap.gray,
+                c === color ? "border-foreground" : "border-transparent"
+              )}
+            />
+          ))}
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }

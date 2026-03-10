@@ -114,7 +114,7 @@ export function ChatContainer() {
 
   return (
     <div className="flex h-full gap-6">
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col min-h-0">
         <div ref={scrollRef} className="flex-1 overflow-auto p-4">
           <ChatMessages messages={messages} isLoading={isLoading} />
         </div>
